@@ -1,0 +1,29 @@
+load(
+    "@rules_java//toolchains:default_java_toolchain.bzl",
+    "DEFAULT_TOOLCHAIN_CONFIGURATION",
+    "default_java_toolchain",
+)
+load(
+    "@rules_java//toolchains:java_toolchain_alias.bzl",
+    "java_runtime_version_alias",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+# Runtime label, usable as java_runtime = "@rules_java_toolchains//toolchains:remotejdk_27"
+# and as --java_runtime_version=remotejdk_27.
+java_runtime_version_alias(
+    name = "remotejdk_27",
+    runtime_version = "remotejdk_27",
+)
+
+# The LTS toolchains in rules_java top out at JDK 25, whose javac rejects
+# source/target 27. Run javac on JDK 27 for the 27 language version without
+# touching the compiler JDK used for older language versions.
+default_java_toolchain(
+    name = "toolchain_jdk_27",
+    configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
+    java_runtime = ":remotejdk_27",
+    source_version = "27",
+    target_version = "27",
+)

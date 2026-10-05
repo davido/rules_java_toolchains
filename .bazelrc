@@ -1,0 +1,5 @@
+# Build/test Java at language level 27 on the JDK 27 toolchain this module provides.
+build:java27 --java_language_version=27
+build:java27 --java_runtime_version=remotejdk_27
+build:java27 --tool_java_language_version=27
+build:java27 --tool_java_runtime_version=remotejdk_27

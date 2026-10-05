@@ -1,0 +1,4 @@
+/bazel-*
+/examples/consuming/bazel-*
+MODULE.bazel.lock
+*.swp

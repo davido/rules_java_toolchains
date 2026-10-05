@@ -1,0 +1,15 @@
+module(
+    name = "consuming_example",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rules_java", version = "9.9.0")
+bazel_dep(name = "rules_java_toolchains", version = "0.0.1")
+
+# Prototype consumption model: point at the local checkout. In gerrit2 this is a
+# git_override onto github.com/davido/rules_java_toolchains; once published, a
+# plain bazel_dep against the Bazel Central Registry.
+local_path_override(
+    module_name = "rules_java_toolchains",
+    path = "../..",
+)

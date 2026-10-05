@@ -1,0 +1,42 @@
+module(
+    name = "rules_java_toolchains",
+    version = "0.0.1",
+    bazel_compatibility = [">=7.0.0"],
+    compatibility_level = 1,
+)
+
+# The toolchain machinery (remote_java_repository, default_java_toolchain,
+# java_runtime_version_alias) lives in rules_java; this module only adds the
+# non-LTS JDK catalog on top of it.
+bazel_dep(name = "rules_java", version = "9.9.0")
+bazel_dep(name = "platforms", version = "1.1.0")
+
+non_lts_jdks = use_extension("//jdk:extensions.bzl", "non_lts_jdks")
+
+# Keep in sync with the catalog in jdk/repositories.bzl.
+_REMOTE_JDK27_REPOS = [
+    "remotejdk27_linux",
+    "remotejdk27_linux_aarch64",
+    "remotejdk27_linux_ppc64le",
+    "remotejdk27_linux_riscv64",
+    "remotejdk27_linux_s390x",
+    "remotejdk27_macos",
+    "remotejdk27_macos_aarch64",
+    "remotejdk27_win",
+]
+
+[
+    use_repo(non_lts_jdks, repo + "_toolchain_config_repo")
+    for repo in _REMOTE_JDK27_REPOS
+]
+
+# Runtime toolchains, selectable with --java_runtime_version=remotejdk_27 (or 27).
+[
+    register_toolchains("@" + repo + "_toolchain_config_repo//:all")
+    for repo in _REMOTE_JDK27_REPOS
+]
+
+# Compile toolchain that runs javac on JDK 27, selectable with
+# --java_language_version=27. The LTS toolchains in rules_java top out at JDK 25,
+# whose javac rejects source/target 27.
+register_toolchains("//toolchains:all")
